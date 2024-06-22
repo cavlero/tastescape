@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block head %}
+<title>Search - TasteScape</title>
+{% endblock %}
+
+<body>
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+  <main id="main">
+
+    <!--  Breadcrumbs  -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="breadcrumb-hero">
+        <div class="container">
+          <div class="breadcrumb-hero">
+            <h2>Enter Ingredients</h2>
+              <form style="display: inline;" action="{{ url_for('submit_search') }}" method="post" name="search">
+                {{ form.hidden_tag() }}
+                {{ form.search(size=20) }}
+                <button type="submit"><i class="bi bi-search"></i></button>
+              </form>
+            <p>Results for {{query}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="container"><ol></ol></div>
+    </section>
+
+    <!-- Recipe Section -->
+    <section id="recipes" class="recipes">
+      <div class="container">
+        <div class="row">
+          {% for recipe in results.items %}
+            <div class="col-md-6 d-flex align-items-stretch" data-aos="fade-up">
+              <a href="recipes/{{ recipe.id }}">
+                <div class="card" style="background-image: url({{recipe.image}})">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ recipe.recipe_title }}</h5>
+                    {% if matching_ingredients_counts[loop.index0] == 1 %}
+                    <p class="card-text"><i class="bi bi-check"></i>Contains 1 item from your search.</p>
+                    {% elif matching_ingredients_counts[loop.index0] > 1 %}
+                    <p class="card-text"><i class="bi bi-check"></i>Contains {{ matching_ingredients_counts[loop.index0] }} items from your search.</p>
+                    {% endif %}
+                  </div>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Pagination-->
+    <div class="blog">
+      <nav aria-label="Page navigation" class="blog-pagination">
+        <ul class="'pagination justify-content-center">
+          {% if results %}
+            {% if results.has_prev %}
+              <li><a href="{{ url_for('search', page=results.prev_num, q=query) }}">Previous</a></li>
+            {% endif %}
+            {% for page_num in results.iter_pages() %}
+              {% if page_num %}
+                <li class="{% if page_num == results.page %}active{% endif %}"><a href="{{ url_for('search', page=page_num, q=query) }}">{{ page_num }}</a></li>
+              {% else %}
+                <li class="disabled" style="padding: 0px 20px;"><span>...</span></li>
+              {% endif %}
+            {% endfor %}
+            {% if results.has_next %}
+              <li><a href="{{ url_for('search', page=results.next_num, q=query) }}">Next</a></li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    
+    {% endblock %}
+  </main>
+
+{% block footer %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+</body>
+</html>

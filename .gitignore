@@ -1,0 +1,8 @@
+# Ignore Zone.Identifier files for Windows
+**:Zone.Identifier
+
+# Ignore pycache
+__pycache__
+
+# Ignore database (protected)
+recipes.db
